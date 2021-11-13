@@ -45,7 +45,7 @@ yellowButton.addEventListener("click", function (evt) {
 async function playGame(greeting, solution, totalRounds) {
 	let displayElement = document.querySelector("#status");
 	// display greeting sequence
-	for(let i = 0; i < greeting.length; i++) {
+	for (let i = 0; i < greeting.length; i++) {
 		//highlight button
 		highlightButton(greeting[i]);
 		// 120 ms interval between each button
@@ -61,8 +61,15 @@ async function playGame(greeting, solution, totalRounds) {
 
 		for (let i = 1; i <= seqLength; i++) {
 			//display button sequence
-			// 400 ms interval between each button
-			setTimeout(() => {}, 400);
+			for (let j = 0; j < i; j++) {
+				//highlight button
+				highlightButton(solution[j]);
+				// 400 ms interval between each button
+				setTimeout(() => {}, 400);
+			}
+
+			//let user duplicate the sequence
+
 			let incorrect = false;
 			if (incorrect) {
 				//play wrong.wav followed directly with lose.wav
@@ -105,5 +112,24 @@ async function playGame(greeting, solution, totalRounds) {
 	return "Win";
 }
 
-highlightButton(char) {
+function highlightButton(char) {
+	if (char == "R") {
+		let redButton = document.querySelector("#redSq");
+		redButton.setAttribute("class", "lightred");
+		redButton.setAttribute("class", "red");
+	} else if (char == "B") {
+		let blueButton = document.querySelector("#blueSq");
+		blueButton.setAttribute("class", "lightblue");
+		blueButton.setAttribute("class", "blue");
+	} else if (char == "G") {
+		let greenButton = document.querySelector("#greenSq");
+		greenButton.setAttribute("class", "lightgreen");
+		greenButton.setAttribute("class", "green");
+	} else if (char == "Y") {
+		let yellowButton = document.querySelector("#yellowSq");
+		yellowButton.setAttribute("class", "lightyellow");
+		yellowButton.setAttribute("class", "yellow");
+	} else {
+		console.log(`error! ${char} is not a vaild color.`);
+	}
 }
