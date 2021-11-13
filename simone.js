@@ -1,4 +1,4 @@
-const { default: axios } = require("axios");
+//const axios = require("axios");
 
 let startButton = document.querySelector("#play");
 startButton.addEventListener("click", async function (evt) {
@@ -42,33 +42,68 @@ yellowButton.addEventListener("click", function (evt) {
 	console.log("yellow clicked");
 });
 
-function playGame(greeting, solution, rounds) {
+async function playGame(greeting, solution, totalRounds) {
+	let displayElement = document.querySelector("#status");
 	// display greeting sequence
-	// 120 ms interval between each button
+	for(let i = 0; i < greeting.length; i++) {
+		//highlight button
+		highlightButton(greeting[i]);
+		// 120 ms interval between each button
+		setTimeout(() => {}, 120);
+	}
 
 	// 4 second delay
+	setTimeout(() => {}, 4000);
 	// start of the first round
-	for (let seqLenth = 0; seqLenth < rounds; seqLenth++) {
-		for (let i = 0; i < seqLenth; i++) {
-			//display sequence of seqLenth
+	for (let seqLength = 1; seqLength <= totalRounds; seqLength++) {
+		//display "sequence of seqLength"
+		displayElement.innerHTML = `sequence of ${seqLength}`;
+
+		for (let i = 1; i <= seqLength; i++) {
+			//display button sequence
 			// 400 ms interval between each button
+			setTimeout(() => {}, 400);
+			let incorrect = false;
 			if (incorrect) {
 				//play wrong.wav followed directly with lose.wav
 				// change background to bright pink
+				let background = document.querySelector("body");
+				background.style.backgroundColor = "DeepSkyBlue";
 				// display "Incorrect! You lose!"
+				displayElement.innerHTML = `Incorrect! You lose!`;
 				//return
+				return "Lost";
 			}
 
-			//if button press is correct, display "So far so good! x more to go!"
+			if (i != seqLength) {
+				//if button press is correct, display "So far so good! i more to go!"
+				displayElement.innerHTML = `So far so good! ${
+					seqLength - i
+				} more to go!`;
+			}
 		}
-
-		//at end of round, display "Good job! Prepare for next round."
-		// 800 ms delay
-		// display "Round x of seqLenth"
-		// 800 ms delay.
+		//if we have more rounds, prep for the next round
+		if (seqLength != totalRounds) {
+			//at end of round, play nextRound.wav
+			//display "Good job! Prepare for next round."
+			displayElement.innerHTML = `Good job! Prepare for next round.`;
+			// 800 ms delay
+			setTimeout(() => {}, 800);
+			// display "Round seqLength of totalRounds"
+			displayElement.innerHTML = `Round ${seqLength} of ${totalRounds}`;
+			// 800 ms delay
+			setTimeout(() => {}, 800);
+		}
 	}
 
 	//If the player wins, play the appropriate sound bites
 	//change the background to DeepSkyBlue
+	let background = document.querySelector("body");
+	background.style.backgroundColor = "DeepSkyBlue";
 	//display "Yay you win!"
+	displayElement.innerHTML = `Yay you win!`;
+	return "Win";
+}
+
+highlightButton(char) {
 }
