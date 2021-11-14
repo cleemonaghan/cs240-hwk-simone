@@ -1,10 +1,38 @@
 //const axios = require("axios");
 
+var simoneButtons = {};
+
 let startButton = document.querySelector("#play");
-startButton.addEventListener("click", async function (evt) {
+startButton.addEventListener("click", function (evt) {
 	try {
+		//initialize the game buttons
+		simoneButtons.red = new SimoneButton(
+			"#redSq",
+			"red",
+			"lightred",
+			"sounds/red.wav"
+		);
+		simoneButtons.blue = new SimoneButton(
+			"#blueSq",
+			"blue",
+			"lightblue",
+			"sounds/blue.wav"
+		);
+		simoneButtons.green = new SimoneButton(
+			"#greenSq",
+			"green",
+			"lightgreen",
+			"sounds/green.wav"
+		);
+		simoneButtons.yellow = new SimoneButton(
+			"#yellowSq",
+			"yellow",
+			"lightyellow",
+			"sounds/yellow.wav"
+		);
+
 		//fetch the greeting sequence from the API
-		let greeting = await axios.get(
+		let greeting = axios.get(
 			"http://cs.pugetsound.edu/~dchiu/cs240/api/simone/",
 			{ cmd: "start" }
 		);
@@ -13,7 +41,7 @@ startButton.addEventListener("click", async function (evt) {
 		let rounds = document.querySelector("#rounds").value;
 
 		//fetch a solution sequence from the API
-		let solution = await axios.get(
+		let solution = axios.get(
 			"http://cs.pugetsound.edu/~dchiu/cs240/api/simone/",
 			{ cmd: "getSolution", rounds: rounds }
 		);
@@ -25,22 +53,28 @@ startButton.addEventListener("click", async function (evt) {
 	}
 });
 
-let redButton = document.querySelector("#redSq");
-redButton.addEventListener("click", function (evt) {
-	console.log("red clicked");
-});
-let blueButton = document.querySelector("#blueSq");
-blueButton.addEventListener("click", function (evt) {
-	console.log("blue clicked");
-});
-let greenButton = document.querySelector("#greenSq");
-greenButton.addEventListener("click", function (evt) {
-	console.log("green clicked");
-});
-let yellowButton = document.querySelector("#yellowSq");
-yellowButton.addEventListener("click", function (evt) {
-	console.log("yellow clicked");
-});
+class SimoneButton {
+	constructor(htmlID, color, highlightColor, sound) {
+		this.htmlElement = document.querySelector(htmlID);
+		this.color = color;
+		this.highlightColor = highlightColor;
+		this.sound = sound;
+	}
+
+	playSound() {
+		new Audio(this.sound).play();
+	}
+	glowButton() {
+		this.htmlElement.className = this.highlightColor;
+	}
+	unglowButton() {
+		this.htmlElement.className = this.color;
+	}
+}
+
+//redButton.addEventListener("click", function (evt) {
+//	console.log("red clicked");
+//});
 
 async function playGame(greeting, solution, totalRounds) {
 	let displayElement = document.querySelector("#status");
@@ -69,6 +103,7 @@ async function playGame(greeting, solution, totalRounds) {
 			}
 
 			//let user duplicate the sequence
+			// fill in...
 
 			let incorrect = false;
 			if (incorrect) {
