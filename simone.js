@@ -1,34 +1,39 @@
 //const axios = require("axios");
 
-var simoneButtons = {};
-
 let startButton = document.querySelector("#play");
 startButton.addEventListener("click", function (evt) {
 	try {
 		//initialize the game buttons
-		simoneButtons.red = new SimoneButton(
+
+		//initialize the game buttons
+		let buttons = {};
+		buttons.red = new SimoneButton(
 			"#redSq",
 			"red",
 			"lightred",
-			"sounds/red.wav"
+			"sounds/red.wav",
+			"R"
 		);
-		simoneButtons.blue = new SimoneButton(
+		buttons.blue = new SimoneButton(
 			"#blueSq",
 			"blue",
 			"lightblue",
-			"sounds/blue.wav"
+			"sounds/blue.wav",
+			"B"
 		);
-		simoneButtons.green = new SimoneButton(
+		buttons.green = new SimoneButton(
 			"#greenSq",
 			"green",
 			"lightgreen",
-			"sounds/green.wav"
+			"sounds/green.wav",
+			"G"
 		);
-		simoneButtons.yellow = new SimoneButton(
+		buttons.yellow = new SimoneButton(
 			"#yellowSq",
 			"yellow",
 			"lightyellow",
-			"sounds/yellow.wav"
+			"sounds/yellow.wav",
+			"Y"
 		);
 
 		//fetch the greeting sequence from the API
@@ -54,11 +59,29 @@ startButton.addEventListener("click", function (evt) {
 });
 
 class SimoneButton {
-	constructor(htmlID, color, highlightColor, sound) {
+	constructor(htmlID, color, highlightColor, sound, char) {
+		//initialize the fields of the button
 		this.htmlElement = document.querySelector(htmlID);
 		this.color = color;
 		this.highlightColor = highlightColor;
 		this.sound = sound;
+		this.char = char;
+
+		//add the event listeners
+		this.htmlElement.addEventListener("mousedown", function (evt) {
+			user.push(char);
+			this.className = highlightColor;
+			new Audio(sound).play();
+		});
+		this.htmlElement.addEventListener("mouseup", function (evt) {
+			this.className = color;
+		});
+		this.htmlElement.addEventListener("mouseout", function (evt) {
+			this.className = color;
+		});
+		this.htmlElement.addEventListener("mouseover", function (evt) {
+			this.classList.add("hover");
+		});
 	}
 
 	playSound() {
@@ -66,6 +89,7 @@ class SimoneButton {
 	}
 	glowButton() {
 		this.htmlElement.className = this.highlightColor;
+		this.playSound();
 	}
 	unglowButton() {
 		this.htmlElement.className = this.color;
