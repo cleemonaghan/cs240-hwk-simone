@@ -1,9 +1,18 @@
-//const axios = require("axios");
+const API_PATH = "http://cs.pugetsound.edu/~dchiu/cs240/api/simone/";
+const GREETING_DELAY = 120;
+const BUTTON_DELAY = 400;
+const TRANSITION_DELAY = 800;
+
+var user = new Array();
 
 let startButton = document.querySelector("#play");
-startButton.addEventListener("click", function (evt) {
+startButton.addEventListener("click", async function (evt) {
 	try {
-		//initialize the game buttons
+		//reset the screen
+		let displayElement = document.querySelector("#status");
+		displayElement.innerHTML = "";
+		let background = document.querySelector("body");
+		background.style.backgroundColor = "black";
 
 		//initialize the game buttons
 		let buttons = {};
@@ -36,22 +45,18 @@ startButton.addEventListener("click", function (evt) {
 			"Y"
 		);
 
-		//fetch the greeting sequence from the API
-		let greeting = axios.get(
-			"http://cs.pugetsound.edu/~dchiu/cs240/api/simone/",
-			{ cmd: "start" }
-		);
-
 		//retrieve the number of rounds to play
-		let rounds = document.querySelector("#rounds").value;
+		let totalRounds = document.querySelector("#rounds").value;
+		//if rounds is undefined, play 10 rounds
+		if (totalRounds == "") {
+			totalRounds = 10;
+		}
 
-		//fetch a solution sequence from the API
-		let solution = axios.get(
-			"http://cs.pugetsound.edu/~dchiu/cs240/api/simone/",
-			{ cmd: "getSolution", rounds: rounds }
-		);
+		//intitalize the greeting and solution sequences
+		let greeting = await getGreetingSeq();
+		let solution = await getSolutionSeq(totalRounds);
 
-		playGame(greeting, solution, rounds);
+		playGame(buttons, greeting, solution, solution.length);
 	} catch (error) {
 		//if something went wrong, print the error to the console
 		console.log(error);
@@ -93,6 +98,30 @@ class SimoneButton {
 	}
 	unglowButton() {
 		this.htmlElement.className = this.color;
+	}
+}
+
+async function getGreetingSeq() {
+	try {
+		// this is key -- wait here until axios request resolves!
+		let result = await axios.get(`${API_PATH}?cmd=start`);
+		return result.data.sequence;
+	} catch (result) {
+		// code to run if unsuccessful
+		console.log(result);
+	}
+}
+
+async function getSolutionSeq(totalRounds) {
+	try {
+		// this is key -- wait here until axios request resolves!
+		let result = await axios.get(
+			`${API_PATH}?cmd=getSolution&rounds=${totalRounds}`
+		);
+		return result.data.key;
+	} catch (result) {
+		// code to run if unsuccessful
+		console.log(result);
 	}
 }
 
