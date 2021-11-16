@@ -96,79 +96,97 @@ class SimoneButton {
 	}
 }
 
-//redButton.addEventListener("click", function (evt) {
-//	console.log("red clicked");
-//});
+async function displaySequence(buttons, sequence, length, delay) {
+	let i = 0;
+	let interval = setInterval(() => {
+		if (i == length) {
+			clearInterval(interval);
+		} else {
+			highlightButton(buttons, sequence[i], delay);
+			i++;
+		}
+	}, delay);
+}
 
-async function playGame(greeting, solution, totalRounds) {
+async function playGame(buttons, greeting, solution, totalRounds) {
 	let displayElement = document.querySelector("#status");
 	// display greeting sequence
-	for (let i = 0; i < greeting.length; i++) {
-		//highlight button
-		highlightButton(greeting[i]);
-		// 120 ms interval between each button
-		setTimeout(() => {}, 120);
-	}
+	// 120 ms interval between each button
+	await displaySequence(buttons, greeting, greeting.length, GREETING_DELAY);
 
-	// 4 second delay
-	setTimeout(() => {}, 4000);
-	// start of the first round
+	await new Promise((r) => {
+		setTimeout(r, 4 * TRANSITION_DELAY);
+	});
+
+	// 4 second delay between greeting and game
 	for (let seqLength = 1; seqLength <= totalRounds; seqLength++) {
 		//display "sequence of seqLength"
-		displayElement.innerHTML = `sequence of ${seqLength}`;
+		await new Promise((r) => {
+			setTimeout(r, TRANSITION_DELAY);
+		});
 
-		for (let i = 1; i <= seqLength; i++) {
-			//display button sequence
-			for (let j = 0; j < i; j++) {
-				//highlight button
-				highlightButton(solution[j]);
-				// 400 ms interval between each button
-				setTimeout(() => {}, 400);
+		//display button sequence
+		// 400 ms interval between each button
+		await displaySequence(buttons, solution, seqLength, BUTTON_DELAY);
+
+		//reset user for this turn
+		user = new Array();
+
+		for (let i = 0; i < seqLength; i++) {
+			//let user duplicate the sequence
+			while (user.length < i + 1) {
+				//if the user has not entered anything yet, wait
+				await new Promise((r) => {
+					setTimeout(r, 50);
+				});
 			}
 
-			//let user duplicate the sequence
-			// fill in...
-
-			let incorrect = false;
-			if (incorrect) {
-				//play wrong.wav followed directly with lose.wav
+			//check if they entered the correct button
+			if (user[i] == solution[i]) {
+				if (i != seqLength - 1) {
+					//if button press is correct, display "So far so good! i more to go!"
+					displayElement.innerHTML = `So far so good! ${
+						seqLength - i - 1
+					} more to go!`;
+				}
+			}
+			//if they were wrong, display the game over screen
+			else {
 				// change background to bright pink
 				let background = document.querySelector("body");
-				background.style.backgroundColor = "DeepSkyBlue";
+				background.style.backgroundColor = "hotpink";
 				// display "Incorrect! You lose!"
 				displayElement.innerHTML = `Incorrect! You lose!`;
+				//play wrong.wav followed directly with lose.wav
+				new Audio("sounds/wrong.wav").play();
+				new Audio("sounds/lose.wav").play();
 				//return
 				return "Lost";
-			}
-
-			if (i != seqLength) {
-				//if button press is correct, display "So far so good! i more to go!"
-				displayElement.innerHTML = `So far so good! ${
-					seqLength - i
-				} more to go!`;
 			}
 		}
 		//if we have more rounds, prep for the next round
 		if (seqLength != totalRounds) {
 			//at end of round, play nextRound.wav
+			new Audio("sounds/nextRound.wav").play();
 			//display "Good job! Prepare for next round."
 			displayElement.innerHTML = `Good job! Prepare for next round.`;
+			await new Promise((r) => {
+				setTimeout(r, TRANSITION_DELAY);
+			});
 			// 800 ms delay
-			setTimeout(() => {}, 800);
 			// display "Round seqLength of totalRounds"
-			displayElement.innerHTML = `Round ${seqLength} of ${totalRounds}`;
-			// 800 ms delay
-			setTimeout(() => {}, 800);
+			displayElement.innerHTML = `Round ${seqLength + 1} of ${totalRounds}`;
+		} else {
+			//If the player wins, play the appropriate sound bites
+			new Audio("sounds/win.mp3").play();
+			//display "Yay you win!"
+			displayElement.innerHTML = `Yay you win!`;
+			//change the background to DeepSkyBlue
+			let background = document.querySelector("body");
+			background.style.backgroundColor = "DeepSkyBlue";
+			return "Win";
 		}
 	}
-
-	//If the player wins, play the appropriate sound bites
-	//change the background to DeepSkyBlue
-	let background = document.querySelector("body");
-	background.style.backgroundColor = "DeepSkyBlue";
-	//display "Yay you win!"
-	displayElement.innerHTML = `Yay you win!`;
-	return "Win";
 }
 
 function highlightButton(buttons, char, delay) {
