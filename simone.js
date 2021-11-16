@@ -171,24 +171,44 @@ async function playGame(greeting, solution, totalRounds) {
 	return "Win";
 }
 
-function highlightButton(char) {
-	if (char == "R") {
-		let redButton = document.querySelector("#redSq");
-		redButton.setAttribute("class", "lightred");
-		redButton.setAttribute("class", "red");
-	} else if (char == "B") {
-		let blueButton = document.querySelector("#blueSq");
-		blueButton.setAttribute("class", "lightblue");
-		blueButton.setAttribute("class", "blue");
-	} else if (char == "G") {
-		let greenButton = document.querySelector("#greenSq");
-		greenButton.setAttribute("class", "lightgreen");
-		greenButton.setAttribute("class", "green");
-	} else if (char == "Y") {
-		let yellowButton = document.querySelector("#yellowSq");
-		yellowButton.setAttribute("class", "lightyellow");
-		yellowButton.setAttribute("class", "yellow");
-	} else {
-		console.log(`error! ${char} is not a vaild color.`);
+function highlightButton(buttons, char, delay) {
+	switch (char) {
+		case "R":
+			setTimeout(() => {
+				buttons.red.glowButton();
+				setTimeout(() => {
+					buttons.red.unglowButton();
+				}, delay);
+			}, delay);
+
+			break;
+		case "B":
+			setTimeout(() => {
+				buttons.blue.glowButton();
+				setTimeout(() => {
+					buttons.blue.unglowButton();
+				}, delay);
+			}, delay);
+
+			break;
+		case "G":
+			setTimeout(() => {
+				buttons.green.glowButton();
+				setTimeout(() => {
+					buttons.green.unglowButton();
+				}, delay);
+			}, delay);
+
+			break;
+		case "Y":
+			setTimeout(() => {
+				buttons.yellow.glowButton();
+				setTimeout(() => {
+					buttons.yellow.unglowButton();
+				}, delay);
+			}, delay);
+			break;
+		default:
+			console.log(`error! ${char} is not a vaild color.`);
 	}
 }
