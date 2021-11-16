@@ -1,3 +1,5 @@
+const axios = require("axios");
+
 const API_PATH = "http://cs.pugetsound.edu/~dchiu/cs240/api/simone/";
 const GREETING_DELAY = 120;
 const BUTTON_DELAY = 400;
